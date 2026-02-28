@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+game.db
+app_output.log
+log.txt
+/home/jules/verification/

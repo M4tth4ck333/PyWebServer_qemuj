@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR-XAI OpenWorld Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1a1a1a; color: #e0e0e0; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        header { width: 100%; background-color: #333; padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .container { width: 90%; max-width: 1200px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px; }
+        .card { background-color: #262626; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        h2 { color: #00adb5; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        .stat { font-size: 1.2em; margin: 10px 0; }
+        .stat span { font-weight: bold; color: #ff5722; }
+        .btn { background-color: #00adb5; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; transition: background 0.3s; }
+        .btn:hover { background-color: #008c92; }
+        #log { font-family: monospace; font-size: 0.9em; height: 150px; overflow-y: scroll; background: #000; padding: 10px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>AR-XAI OpenWorld Dashboard</h1>
+</header>
+
+<div class="container">
+    <div class="card" id="player-status">
+        <h2>Player Status</h2>
+        <div class="stat">Level: <span id="lvl">1</span></div>
+        <div class="stat">XP: <span id="xp">0</span></div>
+        <div class="stat">Mode: <span id="mode">Riemannian Exploration</span></div>
+    </div>
+
+    <div class="card" id="plastic-stats">
+        <h2>Plastic Collection</h2>
+        <div class="stat">PET: <span id="pet">0g</span></div>
+        <div class="stat">Printer Status: <span id="printer">Idle</span></div>
+        <button class="btn" onclick="collectPlastic()">Simulate Collection</button>
+    </div>
+
+    <div class="card" id="manifold-view">
+        <h2>Riemannian Geometry</h2>
+        <div class="stat">Curvature: <span id="curvature">0.000</span></div>
+        <div class="stat">Topology: <span id="topology">Flat</span></div>
+        <button class="btn" onclick="exploreManifold()">Explore Manifold</button>
+    </div>
+
+    <div class="card" style="grid-column: 1 / -1;">
+        <h2>Event Log</h2>
+        <div id="log"></div>
+    </div>
+</div>
+
+<script>
+    function addLog(msg) {
+        const log = document.getElementById('log');
+        const entry = document.createElement('div');
+        entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        log.prepend(entry);
+    }
+
+    async function collectPlastic() {
+        const amount = Math.floor(Math.random() * 100);
+        const res = await fetch('/api/collect', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'PET', weight: amount })
+        });
+        const data = await res.json();
+
+        document.getElementById('pet').textContent = data.weight_processed + 'g';
+        addLog(`Collected ${data.weight_processed}g of PET plastic. Resource gain: ${data.resource_gain.toFixed(2)}.`);
+        if (data.printer_ready) {
+            document.getElementById('printer').textContent = 'Printing...';
+            addLog('3D Printer activated.');
+        } else {
+            document.getElementById('printer').textContent = 'Idle';
+        }
+    }
+
+    async function exploreManifold() {
+        const res = await fetch('/api/explore', { method: 'POST' });
+        const data = await res.json();
+
+        document.getElementById('curvature').textContent = data.curvature.toFixed(4);
+        document.getElementById('topology').textContent = data.curvature > 0 ? 'Spherical' : (data.curvature < 0 ? 'Hyperbolic' : 'Flat');
+        addLog(`Explored manifold. Type: ${data.type}. Local curvature: ${data.curvature.toFixed(4)}.`);
+    }
+
+    // Initial log
+    addLog('System online. Ready for exploration.');
+</script>
+
+</body>
+</html>
