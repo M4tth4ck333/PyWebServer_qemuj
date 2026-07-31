@@ -6,8 +6,8 @@ To compile simply do the following:
   
 Port has been preassigned to <code>8080</code>
 
-To test, navigate to <code>http://localhost:8080/HelloWorld.html</code>
+To test, navigate to <code>http://localhost:8080/index.html</code>
 
-Or, on another host <code>http://{your public IP}:8080/HelloWorld.html</code>
+Or, on another host <code>http://{your public IP}:8080/index.html</code>
 
 Server will log data (http requests, procedure, etc.) to <code>log.txt</code>
